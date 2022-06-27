@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ratings.name" . }}-v1
+  labels:
+    {{- include "ratings.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ratings.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: 
+        {{- include "ratings.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "ratings.serviceAccountName" . }}
+      containers:
+        - name: ratings
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 9080
+          securityContext:
+            runAsUser: 1000
