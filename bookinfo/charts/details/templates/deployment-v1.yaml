@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "details.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount | default .Values.global.replicaCount }}
   selector:
     matchLabels:
       {{- include "details.selectorLabels" . | nindent 6 }}
@@ -17,8 +17,8 @@ spec:
       serviceAccountName: {{ include "details.serviceAccountName" . }}
       containers:
         - name: details
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default .Values.global.image.pullPolicy }}
           ports:
             - containerPort: 9080
           securityContext:
